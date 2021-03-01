@@ -10,4 +10,40 @@ module seven_segment (
     output reg          digit
 );
 
+    reg[3:0] ten_count_reg,unit_count_reg;
+    wire[3:0] decoder;
+    always @(posedge clk) begin
+        if (reset) begin
+            ten_count_reg <= 0;
+            unit_count_reg <= 0;
+            digit <= 0;    
+        end else
+            digit <= !digit;
+        
+        if (load) begin
+            unit_count_reg <= unit_count;
+            ten_count_reg <= ten_count;
+        end
+    end
+
+    assign decoder = digit ? unit_count_reg : ten_count_reg;
+
+    always @(*) begin
+        case(decoder)
+            //                7654321
+            0:  segments = 7'b0111111;
+            1:  segments = 7'b0000110;
+            2:  segments = 7'b1011011;
+            3:  segments = 7'b1001111;
+            4:  segments = 7'b1100110;
+            5:  segments = 7'b1101101;
+            6:  segments = 7'b1111100;
+            7:  segments = 7'b0000111;
+            8:  segments = 7'b1111111;
+            9:  segments = 7'b1100111;
+            default:    
+                segments = 7'b0000000;
+        endcase
+    end
+
 endmodule
